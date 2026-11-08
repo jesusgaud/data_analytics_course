@@ -13,3 +13,4 @@ results/*
 team_results/*
 !team_results/.gitkeep
 *.zip
+*.egg-info/
