@@ -1,0 +1,92 @@
+[project]
+name = "IS 665 Project 2 - Supervised Classification Comparison"
+course = "IS 665 Data Analytics for Information Systems"
+dataset_name = "Breast Cancer Wisconsin (Diagnostic)"
+dataset_source = "UCI Machine Learning Repository / scikit-learn packaged copy"
+dataset_url = "https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic"
+
+[team]
+members = [
+  "Jesus Gaud",
+  "Pruthul Patel",
+  "Blessy Ann Thomas",
+  "Fahad Ali",
+]
+
+[experiment]
+test_size = 0.20
+random_state = 42
+positive_class = "malignant"
+cv_folds = 5
+scoring = "f1"
+schema_version = "1.1"
+
+[models.logistic_regression]
+display_name = "Logistic Regression"
+scale_features = true
+
+[models.logistic_regression.standard_params]
+C = 1.0
+max_iter = 2000
+solver = "liblinear"
+random_state = 42
+
+[models.logistic_regression.tuning_grid]
+C = [0.1, 1.0, 10.0]
+solver = ["liblinear"]
+
+[models.decision_tree]
+display_name = "Decision Tree"
+scale_features = false
+
+[models.decision_tree.standard_params]
+max_depth = 5
+min_samples_split = 2
+random_state = 42
+
+[models.decision_tree.tuning_grid]
+max_depth = [3, 5, 7, 10]
+min_samples_split = [2, 5, 10]
+
+[models.random_forest]
+display_name = "Random Forest"
+scale_features = false
+
+[models.random_forest.standard_params]
+n_estimators = 200
+max_depth = 8
+min_samples_split = 2
+random_state = 42
+n_jobs = -1
+
+[models.random_forest.tuning_grid]
+n_estimators = [100, 200, 300]
+max_depth = [5, 8, 12]
+min_samples_split = [2, 5]
+
+[models.svm]
+display_name = "Support Vector Machine"
+scale_features = true
+
+[models.svm.standard_params]
+C = 1.0
+kernel = "rbf"
+probability = true
+random_state = 42
+
+[models.svm.tuning_grid]
+C = [0.1, 1.0, 10.0]
+kernel = ["linear", "rbf"]
+gamma = ["scale", "auto"]
+
+[models.knn]
+display_name = "K-Nearest Neighbors"
+scale_features = true
+
+[models.knn.standard_params]
+n_neighbors = 5
+weights = "uniform"
+
+[models.knn.tuning_grid]
+n_neighbors = [3, 5, 7, 9]
+weights = ["uniform", "distance"]

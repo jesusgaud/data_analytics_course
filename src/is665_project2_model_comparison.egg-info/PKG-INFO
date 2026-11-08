@@ -1,0 +1,200 @@
+Metadata-Version: 2.4
+Name: is665-project2-model-comparison
+Version: 1.2.0
+Summary: Professional-grade Streamlit application for IS 665 Project 2 supervised classification comparison.
+Author: IS 665 Group 1
+Requires-Python: <3.16,>=3.11
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: streamlit==1.66.1
+Requires-Dist: scikit-learn==1.9.1
+Requires-Dist: pandas==3.1.1
+Requires-Dist: numpy==2.5.4
+Requires-Dist: matplotlib==3.11.2
+Provides-Extra: dev
+Requires-Dist: pytest<10.0,>=8.3; extra == "dev"
+Requires-Dist: pytest-cov<8.0,>=6.0; extra == "dev"
+Requires-Dist: ruff<1.0,>=0.12; extra == "dev"
+Requires-Dist: mypy<2.0,>=1.15; extra == "dev"
+Requires-Dist: pandas-stubs>=3.0; extra == "dev"
+Dynamic: license-file
+
+# IS 665 Project 2 — Model Comparison Lab
+
+A reproducible, team-friendly Streamlit application for comparing supervised-learning algorithms on the **Breast Cancer Wisconsin (Diagnostic)** dataset.
+
+## Project question
+
+> Can supervised machine-learning algorithms accurately classify breast tumors as malignant or benign, and which algorithm performs best under the same experimental conditions?
+
+## Team experience
+
+No teammate needs to edit Python or the TOML configuration.
+
+1. Open/pull the repository.
+2. Double-click `START_PROJECT.bat`.
+3. Select your name.
+4. Select the model you want to run.
+5. Choose **Standard** or **Tuned** mode.
+6. Click **Run Analysis**.
+7. Review the standardized results.
+8. Click **Save Team Results**, **Download Run Summary**, or **Export Result Package**.
+9. The teammate assembling the final submission imports the result packages on the **Team Comparison** tab.
+10. Download the standardized team-comparison CSV for the report.
+
+## Supported models
+
+- Logistic Regression
+- Decision Tree
+- Random Forest
+- Support Vector Machine
+- K-Nearest Neighbors
+
+## Locked experiment contract
+
+Every model uses the same controlled experiment:
+
+- Breast Cancer Wisconsin Diagnostic dataset
+- 80/20 stratified train/test split
+- random state 42
+- malignant as the positive class
+- 5-fold stratified cross-validation on training data
+- Accuracy, Precision, Recall, F1, and ROC-AUC
+- confusion matrix and classification report
+- leakage-safe preprocessing through scikit-learn `Pipeline`
+
+An experiment fingerprint is stored with every result. The Team Comparison page blocks combined analysis when imported runs were generated under incompatible experiment settings.
+
+
+## Configuration format
+
+The application uses `configs/experiment.toml`, parsed with Python's built-in `tomllib` module. There is no PyYAML or other configuration-parser dependency. Portable result manifests are stored as JSON.
+
+## Python support
+
+The project supports Python **3.11 through 3.15**. For new Windows installations, Python **3.15** is recommended. The Windows launcher checks for supported runtimes in descending order and prefers 3.15.
+
+## Repository structure
+
+```text
+.
+├── app.py
+├── START_PROJECT.bat
+├── RUN_TESTS.bat
+├── .python-version
+├── configs/
+│   └── experiment.toml
+├── src/project2_app/
+│   ├── config.py
+│   ├── data.py
+│   ├── evaluation.py
+│   ├── fingerprint.py
+│   ├── models.py
+│   ├── plots.py
+│   ├── reporting.py
+│   ├── storage.py
+│   └── training.py
+├── tests/
+├── docs/
+│   ├── ARCHITECTURE.md
+│   ├── TEAM_WORKFLOW.md
+│   └── WINDOWS_GITHUB_SETUP.md
+├── results/
+├── team_results/
+└── .github/
+    └── workflows/
+        ├── ci.yml
+        └── release.yml
+```
+
+## Quick start for teammates
+
+Double-click:
+
+```text
+START_PROJECT.bat
+```
+
+The launcher:
+
+1. detects the newest supported Python runtime installed (3.15 → 3.11),
+2. creates `.venv` if needed,
+3. upgrades packaging tools,
+4. installs the application,
+5. launches Streamlit.
+
+## VS Code development setup
+
+From the repository root on Windows PowerShell:
+
+```powershell
+py -3.15 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip setuptools wheel
+pip install -e ".[dev]"
+```
+
+Run locally:
+
+```powershell
+streamlit run app.py
+```
+
+Run the complete quality gate:
+
+```powershell
+ruff check .
+mypy src
+pytest --cov=project2_app --cov-report=term-missing --cov-fail-under=75
+```
+
+Or double-click `RUN_TESTS.bat` after the environment exists.
+
+## Result collaboration
+
+Each teammate executes the model locally. The application can create a portable result package containing:
+
+- `metrics.json`
+- `manifest.json`
+- `classification_report.csv`
+- `predictions.csv`
+- `roc_points.csv`
+- `confusion_matrix.png`
+- `roc_curve.png`
+- model-specific interpretation plot when available
+- `run_summary.txt`
+
+Result ZIPs contain data/report artifacts only; importing a teammate package does not execute teammate code.
+
+## CI/CD
+
+GitHub Actions provides the professional quality gate and release workflow.
+
+### CI
+
+On pushes to `main`/`develop` and pull requests to `main`, CI performs:
+
+1. dependency installation
+2. Ruff linting
+3. mypy type checking
+4. pytest with coverage threshold
+5. matrix validation on Python 3.11, 3.12, 3.13, 3.14, and 3.15
+6. Python 3.15 Streamlit/import smoke test
+
+### CD / release packaging
+
+When a version tag such as `v1.2.0` is pushed, the release workflow:
+
+1. runs the quality gate on Python 3.15,
+2. builds a clean distributable ZIP,
+3. publishes the ZIP as a GitHub Release.
+
+This is intentionally a release pipeline rather than a hosted web deployment because the class deliverable is a locally run analytics application.
+
+## Academic interpretation
+
+The application emphasizes **recall for malignant cases** because false negatives represent malignant observations classified as benign. Accuracy, precision, F1, and ROC-AUC remain available for balanced model comparison.
+
+## Dataset source
+
+UCI Machine Learning Repository — Breast Cancer Wisconsin (Diagnostic). Runtime analysis uses scikit-learn's packaged copy of the same classic dataset, so the application does not require an internet connection to load the data.
